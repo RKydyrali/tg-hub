@@ -223,17 +223,13 @@ export function createBot(token, convexBaseUrl, sharedSecret) {
                 return;
             }
             try {
-                await client.upsertUser({
-                    telegramChatId: chatId,
-                    telegramUsername: ctx.from?.username,
-                });
+                await client.getNotificationPreferences(chatId);
                 await ctx.reply("Выберите действие:", { reply_markup: linkedMenuKeyboard() });
                 return;
             }
             catch (e) {
-                if (e instanceof ConvexBotHttpError &&
-                    formatConvexErrorMessage(e) === "Telegram link token required") {
-                    await ctx.reply("Привет! Чтобы подключить аккаунт, откройте настройки в JumysAI и нажмите «Подключить Telegram».", {
+                if (e instanceof ConvexBotHttpError && e.status === 404) {
+                    await ctx.reply("Привет!\n\nЧтобы подключить Telegram к аккаунту JumysAI:\n1) Откройте JumysAI: https://jumysai.vercel.app/\n2) Перейдите в «Настройки»\n3) Нажмите «Подключить Telegram» и вернитесь сюда.\n\nПосле подключения снова отправьте /start.", {
                         reply_markup: unlinkedMenuKeyboard(),
                     });
                     return;
