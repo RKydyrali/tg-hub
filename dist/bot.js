@@ -222,13 +222,24 @@ export function createBot(token, convexBaseUrl, sharedSecret) {
                 });
                 return;
             }
-            await client.upsertUser({
-                telegramChatId: chatId,
-                telegramUsername: ctx.from?.username,
-            });
-            await ctx.reply("Привет! Чтобы подключить аккаунт, откройте настройки в JumysAI и нажмите «Подключить Telegram».", {
-                reply_markup: unlinkedMenuKeyboard(),
-            });
+            try {
+                await client.upsertUser({
+                    telegramChatId: chatId,
+                    telegramUsername: ctx.from?.username,
+                });
+                await ctx.reply("Выберите действие:", { reply_markup: linkedMenuKeyboard() });
+                return;
+            }
+            catch (e) {
+                if (e instanceof ConvexBotHttpError &&
+                    formatConvexErrorMessage(e) === "Telegram link token required") {
+                    await ctx.reply("Привет! Чтобы подключить аккаунт, откройте настройки в JumysAI и нажмите «Подключить Telegram».", {
+                        reply_markup: unlinkedMenuKeyboard(),
+                    });
+                    return;
+                }
+                throw e;
+            }
         }
         catch (e) {
             if (e instanceof ConvexBotHttpError) {
