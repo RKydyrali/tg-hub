@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "node ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
     "grammy": "^1.38.4",
+    "typescript": "^5.9.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
